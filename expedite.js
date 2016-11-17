@@ -12,7 +12,7 @@
         operators: {
             infix: ['=', '≠', '≥', '>', '≤', '<', '+', '-', '×', '/', 'and', 'or', 'xor'],
             prefix: ['-', 'not'],
-            grid: 5
+            grid: 6
         }
     };
 
@@ -68,7 +68,7 @@
 
         showOptionsPopup: function ($operator, expression, operators) {
             var settings = this.settings;
-            var current = $(this).text();
+            var current = $operator.text();
             var $options = $('<div>');
             var count = 0;
             $.each(operators, function() {
@@ -113,8 +113,7 @@
 
             var self = this;
 
-            var settings = this.settings;
-            var parenSize = (100 + (maxDepth - depth) * settings.parenScale) + '%';
+            var parenSize = (100 + (maxDepth - depth) * self.settings.parenScale) + '%';
 
             var $paren1 = $('<span>(</span>');
             $paren1.addClass('expedite-paren');
@@ -137,7 +136,7 @@
             $span.append($paren2);
 
             $operator.click(function() {
-                self.showOptionsPopup($operator, expression, settings.operators.infix);
+                self.showOptionsPopup($operator, expression, self.settings.operators.infix);
             });
 
             var hoverIn = function () {
@@ -159,12 +158,18 @@
         populateUnaryPrefix: function ($span, expression, depth, maxDepth) {
             $span.data('expression', expression);
 
+            var self = this;
+
             var $operator = $('<span>');
             $operator.addClass('expedite-operator');
             $operator.text(expression[0]);
 
             $span.append($operator);
             $span.append(this.populate(expression[1], depth + 1, maxDepth));
+
+            $operator.click(function() {
+                self.showOptionsPopup($operator, expression, self.settings.operators.prefix);
+            });
        }
     });
 

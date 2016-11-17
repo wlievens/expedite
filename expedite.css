@@ -1,42 +1,49 @@
 .expedite
 {
     font-family: Arial;
-    font-size: 30pt;
+    font-size: 20pt;
+    user-select: none;
+    display: inline;
 }
 
 .expedite span
 {
-    margin: 0.1em;
+    padding: 0.0em;
+    margin: 0.02em;
+    cursor: pointer;
+    text-shadow: 0px 0px 1px gray;
 }
 
-.expedite-paren
+.expedite .expedite-paren
 {
     color: #c724d8;
 }
 
-.expedite .expedite-inner-hover
+.expedite .expedite-inner-highlight
 {
     background-color: rgba(96, 182, 255, 0.18);
 }
 
-.expedite-paren.expedite-hover
+.expedite .expedite-operator
 {
-    color: #f371ff;
-    font-weight: bold;
+    color: #228833;
+    padding: 0.2em;
+    font-size: 80%;
 }
 
-.expedite-operator
-{
-    color: #2d803c;
-}
-
-.expedite-number
+.expedite .expedite-number
 {
     color: #1db4d6;
     font-size: 80%;
 }
 
-.expedite-variable
+.expedite .expedite-variable
 {
     color: #a10501;
+    font-size: 100%;
+}
+
+.expedite span:hover
+{
+    text-shadow:0px 0px 4px black;
 }

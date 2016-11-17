@@ -15,7 +15,8 @@
     var pluginName = 'expedite';
     var defaults = {
         parenScale: 25,
-        expression: []
+        expression: [],
+        operators: ['=', '≠', '≥', '>', '≤', '<', '+', '-', '×', '/']
     };
 
     // The actual plugin constructor
@@ -51,53 +52,9 @@
             var $span = $('<span>');
 
             if (expression.length == 3) {
-                // Binary infix
-
-                var parenSize = (100 + (maxDepth - depth) * this.settings.parenScale) + '%';
-
-                var $paren1 = $('<span>(</span>');
-                $paren1.addClass('expedite-paren');
-                $paren1.css('font-size', parenSize);
-                $span.append($paren1);
-
-                var $operator = $('<span>');
-                $operator.addClass('expedite-operator');
-                $operator.text(expression[0]);
-
-                var $inner = $('<span>');
-                $inner.append(this.populate(expression[1], depth + 1, maxDepth));
-                $inner.append($operator);
-                $inner.append(this.populate(expression[2], depth + 1, maxDepth));
-                $span.append($inner);
-
-                var $paren2 = $('<span>)</span>');
-                $paren2.addClass('expedite-paren');
-                $paren2.css('font-size', parenSize);
-                $span.append($paren2);
-
-                var hoverIn = function () {
-                    $paren1.addClass('expedite-hover');
-                    $paren2.addClass('expedite-hover');
-                    $inner.addClass('expedite-inner-hover');
-                };
-
-                var hoverOut = function () {
-                    $paren1.removeClass('expedite-hover');
-                    $paren2.removeClass('expedite-hover');
-                    $inner.removeClass('expedite-inner-hover');
-                };
-
-                $paren1.hover(hoverIn, hoverOut);
-                $paren2.hover(hoverIn, hoverOut);
+                this.populateBinaryInfix($span, expression, depth, maxDepth);
             } else if (expression.length == 2) {
-                // Unary prefix
-
-                var $operator = $('<span>');
-                $operator.addClass('expedite-operator');
-                $operator.text(expression[0]);
-
-                $span.append($operator);
-                $span.append(this.populate(expression[1], depth + 1, maxDepth));
+                this.populateUnaryPrefix($span, expression, depth, maxDepth);
             } else if (typeof expression === 'number') {
                 // Nullary number
 
@@ -110,7 +67,61 @@
                 $span.append(expression);
             }
             return $span;
-        }
+        },
+        populateBinaryInfix: function ($span, expression, depth, maxDepth) {
+            var parenSize = (100 + (maxDepth - depth) * this.settings.parenScale) + '%';
+
+            var $paren1 = $('<span>(</span>');
+            $paren1.addClass('expedite-paren');
+            $paren1.css('font-size', parenSize);
+            $span.append($paren1);
+
+            var $operator = $('<span>');
+            $operator.addClass('expedite-operator');
+            $operator.text(expression[0]);
+
+            var $inner = $('<span>');
+            $inner.append(this.populate(expression[1], depth + 1, maxDepth));
+            $inner.append($operator);
+            $inner.append(this.populate(expression[2], depth + 1, maxDepth));
+            $span.append($inner);
+
+            var $paren2 = $('<span>)</span>');
+            $paren2.addClass('expedite-paren');
+            $paren2.css('font-size', parenSize);
+            $span.append($paren2);
+
+            $operator.click(function() {
+                $options = $('<div>');
+                $.each(this.settings.operators, function() {
+                    var operator = this;
+                    $options.add(operator);
+                });
+            });
+
+            var hoverIn = function () {
+                $paren1.addClass('expedite-outer-highlight');
+                $paren2.addClass('expedite-outer-highlight');
+                $inner.addClass('expedite-inner-highlight');
+            };
+
+            var hoverOut = function () {
+                $paren1.removeClass('expedite-outer-highlight');
+                $paren2.removeClass('expedite-outer-highlight');
+                $inner.removeClass('expedite-inner-highlight');
+            };
+
+            $paren1.hover(hoverIn, hoverOut);
+            $paren2.hover(hoverIn, hoverOut);
+        },
+        populateUnaryPrefix: function ($span, expression, depth, maxDepth) {
+           var $operator = $('<span>');
+           $operator.addClass('expedite-operator');
+           $operator.text(expression[0]);
+
+           $span.append($operator);
+           $span.append(this.populate(expression[1], depth + 1, maxDepth));
+       }
     });
 
 // A really lightweight plugin wrapper around the constructor,

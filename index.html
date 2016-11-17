@@ -4,19 +4,32 @@
     <title>Expedite Test Page</title>
     <script type="text/javascript" src="jquery-3.1.1.js"></script>
     <script type="text/javascript" src="expedite.js"></script>
-	<link href="expedite.css" rel="stylesheet" />
+    <link href="expedite.css" rel="stylesheet"/>
 </head>
 
 <body>
 
-<div id="editor"></div>
+<div>
+    This expression here
+    <div id="arithmetic"></div>
+    is arithmetic...
+</div>
+
+<div>
+    While this one
+    <div id="logical"></div>
+    is logical!
+</div>
 
 </body>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#editor').expedite({
-            expression: ['≥', 'x', ['×', 'y', ['+', 3.2, 'a']]]
+        $('#arithmetic').expedite({
+            expression: ['-', 'x', ['×', 'y', ['+', 3.2, 'a']]]
+        });
+        $('#logical').expedite({
+            expression: ['and', 'a', ['or', 'b', ['≥', 'x', 100]]]
         });
     });
 </script>

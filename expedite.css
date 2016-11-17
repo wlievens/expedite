@@ -13,6 +13,7 @@
     cursor: pointer;
     text-shadow: 0px 0px 1px gray;
     text-align: center;
+    font-size: 100%;
 }
 
 .expedite span:hover
@@ -28,6 +29,7 @@
     text-shadow: 0px 0px 1px gray;
     text-align: center;
     border: none;
+    font-size: 100%;
 }
 
 .expedite input:hover
@@ -53,19 +55,16 @@
 {
     color: #228833;
     padding: 0.2em;
-    font-size: 85%;
 }
 
 .expedite .expedite-number
 {
     color: #1db4d6;
-    font-size: 85%;
 }
 
 .expedite .expedite-variable
 {
     color: #a10501;
-    font-size: 100%;
 }
 
 .expedite-popup

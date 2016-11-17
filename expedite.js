@@ -2,45 +2,39 @@
 
     'use strict';
 
-    // undefined is used here as the undefined global variable in ECMAScript 3 is
-    // mutable (ie. it can be changed by someone else). undefined isn't really being
-    // passed in so we can ensure the value of it is truly undefined. In ES5, undefined
-    // can no longer be modified.
-
-    // window and document are passed through as local variables rather than global
-    // as this (slightly) quickens the resolution process and can be more efficiently
-    // minified (especially when both are regularly referenced in your plugin).
-
-    // Create the defaults once
+    // Setup plugin name
     var pluginName = 'expedite';
+
+    // Create the defaults
     var defaults = {
         parenScale: 25,
         expression: [],
-        operators: ['=', '≠', '≥', '>', '≤', '<', '+', '-', '×', '/']
+        operators: {
+            infix: ['=', '≠', '≥', '>', '≤', '<', '+', '-', '×', '/', 'and', 'or', 'xor'],
+            prefix: ['-', 'not'],
+            grid: 5
+        }
     };
 
-    // The actual plugin constructor
+    // Plugin constructor
     function Plugin(element, options) {
         this.element = element;
 
-        // jQuery has an extend method which merges the contents of two or
-        // more objects, storing the result in the first object. The first object
-        // is generally empty as we don't want to alter the default options for
-        // future instances of the plugin
         this.settings = $.extend({}, defaults, options);
         this._defaults = defaults;
         this._name = pluginName;
         this.init();
     }
 
-    // Avoid Plugin.prototype conflicts
     $.extend(Plugin.prototype, {
+
         init: function () {
             var maxDepth = this.getMaxDepth(this.settings.expression);
             var $tree = this.populate(this.settings.expression, 0, maxDepth);
             $(this.element).addClass('expedite');
             $(this.element).append($tree);
         },
+
         getMaxDepth: function (expression) {
             var depth = 0;
             for (var n = 1; n < expression.length; ++n) {
@@ -48,6 +42,7 @@
             }
             return depth;
         },
+
         populate: function (expression, depth, maxDepth) {
             var $span = $('<span>');
 
@@ -58,18 +53,68 @@
             } else if (typeof expression === 'number') {
                 // Nullary number
 
+                $span.data('expression', expression);
                 $span.addClass('expedite-number');
                 $span.append(expression);
             } else {
                 // Nullary variable
 
+                $span.data('expression', expression);
                 $span.addClass('expedite-variable');
                 $span.append(expression);
             }
             return $span;
         },
+
+        showOptionsPopup: function ($operator, expression, operators) {
+            var settings = this.settings;
+            var current = $(this).text();
+            var $options = $('<div>');
+            var count = 0;
+            $.each(operators, function() {
+                var operator = this;
+                if (operator == current) {
+                    return;
+                }
+                var $option = $('<span>');
+                $option.addClass('expedite-operator');
+                $option.text(operator);
+                $option.click(function() {
+                    expression[0] = operator;
+                    $operator.text(operator);
+                    $options.fadeOut('fast', function() {
+                        $(this).remove();
+                    });
+                });
+                $options.mouseleave(function() {
+                    $options.fadeOut('fast', function() {
+                        $(this).remove();
+                    });
+                });
+                $options.append($option);
+                ++count;
+                if (count % settings.operators.grid == 0) {
+                    $options.append('<br>');
+                }
+            });
+            $('body').append($options);
+            var position = $operator.position();
+            $options.addClass('expedite');
+            $options.addClass('expedite-popup');
+            $options.css({
+                'left': position.left,
+                'top': position.top
+            });
+            $options.animate({ opacity: 'toggle', height: 'toggle' }, 'fast');
+        },
+
         populateBinaryInfix: function ($span, expression, depth, maxDepth) {
-            var parenSize = (100 + (maxDepth - depth) * this.settings.parenScale) + '%';
+            $span.data('expression', expression);
+
+            var self = this;
+
+            var settings = this.settings;
+            var parenSize = (100 + (maxDepth - depth) * settings.parenScale) + '%';
 
             var $paren1 = $('<span>(</span>');
             $paren1.addClass('expedite-paren');
@@ -92,11 +137,7 @@
             $span.append($paren2);
 
             $operator.click(function() {
-                $options = $('<div>');
-                $.each(this.settings.operators, function() {
-                    var operator = this;
-                    $options.add(operator);
-                });
+                self.showOptionsPopup($operator, expression, settings.operators.infix);
             });
 
             var hoverIn = function () {
@@ -114,18 +155,19 @@
             $paren1.hover(hoverIn, hoverOut);
             $paren2.hover(hoverIn, hoverOut);
         },
-        populateUnaryPrefix: function ($span, expression, depth, maxDepth) {
-           var $operator = $('<span>');
-           $operator.addClass('expedite-operator');
-           $operator.text(expression[0]);
 
-           $span.append($operator);
-           $span.append(this.populate(expression[1], depth + 1, maxDepth));
+        populateUnaryPrefix: function ($span, expression, depth, maxDepth) {
+            $span.data('expression', expression);
+
+            var $operator = $('<span>');
+            $operator.addClass('expedite-operator');
+            $operator.text(expression[0]);
+
+            $span.append($operator);
+            $span.append(this.populate(expression[1], depth + 1, maxDepth));
        }
     });
 
-// A really lightweight plugin wrapper around the constructor,
-// preventing against multiple instantiations
     $.fn[pluginName] = function (options) {
         return this.each(function () {
             if (!$.data(this, 'plugin_' + pluginName)) {

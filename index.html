@@ -26,10 +26,10 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#arithmetic').expedite({
-            expression: ['-', 'x', ['×', ['-', 'y'], ['+', 3.2, 'a']]]
+            expression: ['/', 1000, ['-', ['+', 'x', 200.37], ['×', ['-', 'y'], ['+', 3.2, 'a']]]]
         });
         $('#logical').expedite({
-            expression: ['and', 'a', ['or', 'b', ['≥', 'x', 100]]]
+            expression: ['>', 'Stock Price', ['×', 'Mean Buy Price', 1.25]]
         });
     });
 </script>

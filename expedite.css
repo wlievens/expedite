@@ -1,0 +1,42 @@
+.expedite
+{
+    font-family: Arial;
+    font-size: 30pt;
+}
+
+.expedite span
+{
+    margin: 0.1em;
+}
+
+.expedite-paren
+{
+    color: #c724d8;
+}
+
+.expedite .expedite-inner-hover
+{
+    background-color: rgba(96, 182, 255, 0.18);
+}
+
+.expedite-paren.expedite-hover
+{
+    color: #f371ff;
+    font-weight: bold;
+}
+
+.expedite-operator
+{
+    color: #2d803c;
+}
+
+.expedite-number
+{
+    color: #1db4d6;
+    font-size: 80%;
+}
+
+.expedite-variable
+{
+    color: #a10501;
+}

@@ -1,0 +1,24 @@
+<html>
+
+<head>
+    <title>Expedite Test Page</title>
+    <script type="text/javascript" src="jquery-3.1.1.js"></script>
+    <script type="text/javascript" src="expedite.js"></script>
+	<link href="expedite.css" rel="stylesheet" />
+</head>
+
+<body>
+
+<div id="editor"></div>
+
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#editor').expedite({
+            expression: ['≥', 'x', ['×', 'y', ['+', 3.2, 'a']]]
+        });
+    });
+</script>
+
+</html>
